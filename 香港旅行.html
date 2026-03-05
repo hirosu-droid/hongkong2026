@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026年 家族香港旅行 ダッシュボード</title>
+  
+  <!-- Tailwind CSS (デザインを整えるツール) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome (アイコンを表示するツール) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- React & ReactDOM (アプリを動かすためのシステム) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (コードをブラウザが読める形に翻訳するツール) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* アニメーション用スタイル */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans pb-20 md:pb-0">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const tripData = {
+      title: "2026年 家族香港旅行",
+      dates: "2026/3/19(木) - 3/23(月)",
+      members: {
+        main: { id: 'main', label: '本隊 (啓之・実鈴・雄太)', count: 3 },
+        sub: { id: 'sub', label: '健太 (別動隊)', count: 1 }
+      },
+      flights: {
+        main: {
+          airline: "香港エクスプレス",
+          bookingRef: "G48ZUI / AN25102602314 (HIS)",
+          outbound: { date: "2026/03/20(金)", depTime: "15:25", depPort: "中部(NGO) T2", arrTime: "19:15", arrPort: "香港(HKG) T1", flight: "UO681", time: "4時間50分" },
+          inbound: { date: "2026/03/23(月)", depTime: "10:00", depPort: "香港(HKG) T1", arrTime: "14:30", arrPort: "中部(NGO) T2", flight: "UO680", time: "3時間30分" }
+        },
+        sub: {
+          airline: "香港エクスプレス",
+          bookingRef: "往路: Q5FRTV",
+          outbound: { date: "2026/03/19(木)", depTime: "23:55", depPort: "羽田(HND) T3", arrTime: "04:15", arrPort: "香港(HKG) T1 (翌日)", flight: "UO623", time: "約4時間20分" },
+          inbound: { date: "2026/03/23(月)", depTime: "02:00", depPort: "香港(HKG) T1", arrTime: "06:55", arrPort: "成田(NRT) T2", flight: "UO854", time: "約3時間55分" }
+        }
+      },
+      hotels: {
+        main: {
+          name: "パンダホテル (悦來酒店) Panda Hotel",
+          address: "3 Tsuen Wah Street, Tsuen Wan, New Territories, HONG KONG",
+          tel: "+852-24091111",
+          bookingRef: "AN25102602314 (HIS)",
+          checkIn: "2026/03/20(金) 15:00~",
+          checkOut: "2026/03/23(月) ~11:00",
+          nights: 3,
+          guests: "SUZUKI/HIROYUKI, SUZUKI/MISUZU, SUZUKI/YUTA",
+          room: "デラックス 日本居住者限定プラン (3名1室)"
+        },
+        sub: {
+          name: "パンダホテル (悦來酒店) Panda Hotel",
+          address: "3 Tsuen Wah Street, Tsuen Wan, New Territories, HONG KONG",
+          tel: "+852-24091111",
+          bookingRef: "RYa0ky1jnh (楽天トラベル)",
+          checkIn: "2026/03/20(金) 15:00~ (※早朝到着のため荷物預け等要確認)",
+          checkOut: "2026/03/22(日) ~11:00",
+          nights: 2,
+          guests: "SUZUKI/KENTA",
+          room: "Deluxe Twin Bedroom (Free Wifi, 1名利用)"
+        }
+      },
+      schedule: [
+        {
+          date: "3/19 (木)",
+          events: [
+            { time: "23:55", group: "健太", desc: "羽田空港 T3 出発 (UO623) ※機中泊", icon: "fa-solid fa-plane" }
+          ]
+        },
+        {
+          date: "3/20 (金)",
+          events: [
+            { time: "04:15", group: "健太", desc: "香港空港 T1 到着", icon: "fa-solid fa-plane" },
+            { time: "06:00", group: "健太", desc: "ホテルへ移動・荷物預け、合流までフリータイム", icon: "fa-solid fa-building" },
+            { time: "08:40", group: "本隊", desc: "自宅出発", icon: "fa-solid fa-location-dot" },
+            { time: "12:00", group: "本隊", desc: "中部国際空港 セントレア到着", icon: "fa-regular fa-clock" },
+            { time: "15:25", group: "本隊", desc: "中部国際空港 T2 出発 (UO681)", icon: "fa-solid fa-plane" },
+            { time: "19:15", group: "本隊", desc: "香港空港 T1 到着、入国手続き", icon: "fa-solid fa-plane" },
+            { time: "20:30", group: "本隊", desc: "A31バス等でパンダホテルへ移動", icon: "fa-solid fa-bus" },
+            { time: "21:00", group: "全員", desc: "パンダホテルにて合流！夜市で食事へ", icon: "fa-solid fa-utensils" }
+          ]
+        },
+        {
+          date: "3/21 (土)",
+          events: [
+            { time: "終日", group: "全員", desc: "香港ディズニーランド 満喫", icon: "fa-solid fa-ticket" },
+            { time: "備考", group: "情報", desc: "KLOOKバウチャー持参 (Conf: 17388065)", icon: "fa-solid fa-circle-info" }
+          ]
+        },
+        {
+          date: "3/22 (日)",
+          events: [
+            { time: "朝", group: "健太", desc: "ホテルチェックアウト、荷物預け", icon: "fa-solid fa-building" },
+            { time: "午前", group: "全員", desc: "香港市内 または マカオ観光散策", icon: "fa-solid fa-camera" },
+            { time: "午後", group: "全員", desc: "観光＆食事 (エッグタルト、ワンタン麺など)", icon: "fa-solid fa-utensils" },
+            { time: "夜", group: "健太", desc: "香港空港へ移動 (翌深夜便のため)", icon: "fa-solid fa-train" }
+          ]
+        },
+        {
+          date: "3/23 (月)",
+          events: [
+            { time: "02:00", group: "健太", desc: "香港空港 T1 出発 (UO854)", icon: "fa-solid fa-plane" },
+            { time: "06:55", group: "健太", desc: "成田空港 T2 到着、お疲れ様でした！", icon: "fa-solid fa-plane" },
+            { time: "午前", group: "本隊", desc: "お土産購入、ホテルチェックアウト", icon: "fa-solid fa-building" },
+            { time: "10:00", group: "本隊", desc: "香港空港 T1 出発 (UO680)", icon: "fa-solid fa-plane" },
+            { time: "14:30", group: "本隊", desc: "中部国際空港 T2 到着、お疲れ様でした！", icon: "fa-solid fa-plane" }
+          ]
+        }
+      ],
+      vouchers: [
+        { type: "ディズニーランド", ref: "17388065 (KLOOK)", detail: "1-DAY TICKET (TIER 2) x 4枚", note: "QRコードを入園ゲートで提示" },
+        { type: "本隊 航空券+ホテル", ref: "AN25102602314", detail: "HIS一括手配", note: "eチケット控え・バウチャー持参" },
+        { type: "健太 航空券(往)", ref: "Q5FRTV", detail: "香港エクスプレス", note: "オンラインチェックイン推奨" },
+        { type: "健太 ホテル", ref: "RYa0ky1jnh", detail: "楽天トラベル手配", note: "予約確認書を持参" }
+      ],
+      spots: [
+        "香港ディズニーランド", "ビクトリア・ピーク", "スターフェリー", "シンフォニー・オブ・ライツ", 
+        "PMQ（元創方）", "大館（Tai Kwun）", "文武廟", "女人街、金魚街", 
+        "【マカオ】セナド広場、聖ポール天主堂跡、モンテの砦"
+      ],
+      food: [
+        "飲茶", "エッグタルト", "ワンタン麺（池記など）", "海鮮料理", "ローカルフード"
+      ],
+      items: [
+        "パスポート (残存有効期間を確認)", "航空券 (eチケット控え)", "ホテルの予約確認書", 
+        "海外旅行保険証", "現金 (香港ドル/日本円) / クレジットカード", 
+        "変換プラグ (BFタイプ)", "モバイルバッテリー", "常備薬", "着替え、羽織るもの (冷房対策)"
+      ]
+    };
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('schedule');
+      const [activeGroup, setActiveGroup] = useState('main'); 
+
+      const tabs = [
+        { id: 'schedule', label: '旅程', icon: 'fa-regular fa-calendar-days' },
+        { id: 'flight_hotel', label: 'フライト＆宿泊', icon: 'fa-solid fa-plane' },
+        { id: 'activity', label: '観光＆食事', icon: 'fa-solid fa-map' },
+        { id: 'info', label: 'メモ・バウチャー', icon: 'fa-solid fa-suitcase' },
+      ];
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <header className="bg-indigo-900 text-white p-6 shadow-md">
+            <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <i className="fa-solid fa-location-dot text-indigo-300"></i>
+                  {tripData.title}
+                </h1>
+                <p className="text-indigo-200 mt-1">{tripData.dates}</p>
+              </div>
+              <div className="flex bg-indigo-800/50 rounded-lg p-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <i className="fa-solid fa-users text-white"></i>
+                  <span>本隊: 3名</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <i className="fa-solid fa-user text-indigo-300"></i>
+                  <span>健太: 1名</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="max-w-4xl mx-auto p-4 md:p-6 mt-4">
+            
+            {/* Tab Navigation (Desktop) */}
+            <div className="hidden md:flex bg-white rounded-xl shadow-sm mb-6 p-1 border border-slate-200">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'text-slate-500 hover:bg-slate-50'
+                  }`}
+                >
+                  <i className={tab.icon}></i>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="animate-fade-in">
+              
+              {/* SCHEDULE TAB */}
+              {activeTab === 'schedule' && (
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2 mb-4 border-b pb-2">
+                    <i className="fa-regular fa-calendar-days text-indigo-600"></i>
+                    日程表
+                  </h2>
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6">
+                    <div className="space-y-8">
+                      {tripData.schedule.map((day, idx) => (
+                        <div key={idx} className="relative">
+                          <h3 className="text-lg font-bold text-indigo-900 mb-4 bg-indigo-50 inline-block px-3 py-1 rounded-md">
+                            {day.date}
+                          </h3>
+                          <div className="space-y-4 ml-2 md:ml-4 border-l-2 border-indigo-100 pl-4 md:pl-6">
+                            {day.events.map((ev, evIdx) => (
+                              <div key={evIdx} className="relative flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
+                                <div className="absolute -left-[25px] md:-left-[33px] bg-white p-1 rounded-full border-2 border-indigo-200 flex items-center justify-center w-6 h-6 md:w-8 md:h-8">
+                                  <i className={`${ev.icon} text-indigo-500 text-xs md:text-sm`}></i>
+                                </div>
+                                <div className="font-semibold text-slate-600 min-w-[60px] pt-1">
+                                  {ev.time}
+                                </div>
+                                <div className="bg-slate-50 rounded-lg p-3 flex-1 border border-slate-100">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                      ev.group === '本隊' ? 'bg-blue-100 text-blue-700' :
+                                      ev.group === '健太' ? 'bg-orange-100 text-orange-700' :
+                                      'bg-green-100 text-green-700'
+                                    }`}>
+                                      {ev.group}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-800">{ev.desc}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FLIGHT & HOTEL TAB */}
+              {activeTab === 'flight_hotel' && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-end mb-4 border-b pb-2">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      <i className="fa-solid fa-plane text-indigo-600"></i>
+                      フライト＆宿泊情報
+                    </h2>
+                  </div>
+
+                  {/* Group Toggle */}
+                  <div className="flex bg-slate-200 p-1 rounded-lg w-full max-w-sm mb-6">
+                    <button 
+                      onClick={() => setActiveGroup('main')}
+                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${activeGroup === 'main' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}
+                    >
+                      本隊 (3名)
+                    </button>
+                    <button 
+                      onClick={() => setActiveGroup('sub')}
+                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${activeGroup === 'sub' ? 'bg-white shadow-sm text-orange-600' : 'text-slate-500'}`}
+                    >
+                      健太 (別動隊)
+                    </button>
+                  </div>
+
+                  {/* Flight Info */}
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className={`px-4 py-3 font-bold text-white ${activeGroup === 'main' ? 'bg-blue-600' : 'bg-orange-500'}`}>
+                      航空券情報 - {tripData.flights[activeGroup].airline}
+                    </div>
+                    <div className="p-4 md:p-6 space-y-6">
+                      <div className="flex justify-between items-center text-sm text-slate-500 bg-slate-50 p-2 rounded">
+                        <span>予約番号: <strong className="text-slate-800">{tripData.flights[activeGroup].bookingRef}</strong></span>
+                      </div>
+                      
+                      {/* Outbound */}
+                      <div className="flex flex-col md:flex-row items-center gap-4">
+                        <div className="bg-indigo-50 text-indigo-800 font-bold px-3 py-1 rounded shrink-0">往路</div>
+                        <div className="flex-1 w-full flex items-center justify-between">
+                          <div className="text-center w-1/3">
+                            <div className="text-sm text-slate-500">{tripData.flights[activeGroup].outbound.date}</div>
+                            <div className="text-xl md:text-2xl font-black">{tripData.flights[activeGroup].outbound.depTime}</div>
+                            <div className="text-sm font-medium">{tripData.flights[activeGroup].outbound.depPort}</div>
+                          </div>
+                          <div className="w-1/3 flex flex-col items-center px-2">
+                            <div className="text-xs text-slate-400 mb-1">{tripData.flights[activeGroup].outbound.flight}</div>
+                            <div className="w-full h-px bg-slate-300 relative">
+                              <i className="fa-solid fa-plane absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-slate-400"></i>
+                            </div>
+                            <div className="text-xs text-slate-400 mt-1">{tripData.flights[activeGroup].outbound.time}</div>
+                          </div>
+                          <div className="text-center w-1/3">
+                            <div className="text-sm text-slate-500">到着</div>
+                            <div className="text-xl md:text-2xl font-black">{tripData.flights[activeGroup].outbound.arrTime}</div>
+                            <div className="text-sm font-medium">{tripData.flights[activeGroup].outbound.arrPort}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <hr className="border-slate-100" />
+
+                      {/* Inbound */}
+                      <div className="flex flex-col md:flex-row items-center gap-4">
+                        <div className="bg-indigo-50 text-indigo-800 font-bold px-3 py-1 rounded shrink-0">復路</div>
+                        <div className="flex-1 w-full flex items-center justify-between">
+                          <div className="text-center w-1/3">
+                            <div className="text-sm text-slate-500">{tripData.flights[activeGroup].inbound.date}</div>
+                            <div className="text-xl md:text-2xl font-black">{tripData.flights[activeGroup].inbound.depTime}</div>
+                            <div className="text-sm font-medium">{tripData.flights[activeGroup].inbound.depPort}</div>
+                          </div>
+                          <div className="w-1/3 flex flex-col items-center px-2">
+                            <div className="text-xs text-slate-400 mb-1">{tripData.flights[activeGroup].inbound.flight}</div>
+                            <div className="w-full h-px bg-slate-300 relative">
+                              <i className="fa-solid fa-plane absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-slate-400"></i>
+                            </div>
+                            <div className="text-xs text-slate-400 mt-1">{tripData.flights[activeGroup].inbound.time}</div>
+                          </div>
+                          <div className="text-center w-1/3">
+                            <div className="text-sm text-slate-500">到着</div>
+                            <div className="text-xl md:text-2xl font-black">{tripData.flights[activeGroup].inbound.arrTime}</div>
+                            <div className="text-sm font-medium">{tripData.flights[activeGroup].inbound.arrPort}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hotel Info */}
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className={`px-4 py-3 font-bold text-white flex items-center gap-2 ${activeGroup === 'main' ? 'bg-blue-600' : 'bg-orange-500'}`}>
+                      <i className="fa-solid fa-building"></i>
+                      宿泊先情報
+                    </div>
+                    <div className="p-4 md:p-6 space-y-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">{tripData.hotels[activeGroup].name}</h3>
+                        <p className="text-sm text-slate-500 flex items-start gap-1 mt-1">
+                          <i className="fa-solid fa-location-dot mt-1"></i>
+                          {tripData.hotels[activeGroup].address}
+                        </p>
+                        <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
+                          <i className="fa-solid fa-phone"></i>
+                          {tripData.hotels[activeGroup].tel}
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <div>
+                          <div className="text-xs text-slate-500 mb-1">チェックイン</div>
+                          <div className="font-bold">{tripData.hotels[activeGroup].checkIn}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-500 mb-1">チェックアウト</div>
+                          <div className="font-bold">{tripData.hotels[activeGroup].checkOut}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-500 mb-1">宿泊数</div>
+                          <div className="font-bold">{tripData.hotels[activeGroup].nights}泊</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-500 mb-1">予約番号</div>
+                          <div className="font-bold">{tripData.hotels[activeGroup].bookingRef}</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-indigo-50/50 p-4 rounded-lg">
+                        <div className="text-xs text-indigo-500 font-bold mb-1">宿泊者・ルームタイプ</div>
+                        <div className="font-medium text-slate-800">{tripData.hotels[activeGroup].guests}</div>
+                        <div className="text-sm text-slate-600 mt-1">{tripData.hotels[activeGroup].room}</div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ACTIVITY TAB */}
+              {activeTab === 'activity' && (
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2 mb-4 border-b pb-2">
+                    <i className="fa-solid fa-map text-indigo-600"></i>
+                    観光＆食事プラン
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                      <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-indigo-900">
+                        <i className="fa-solid fa-camera text-indigo-500"></i>
+                        観光名所リスト
+                      </h3>
+                      <ul className="space-y-3">
+                        {tripData.spots.map((spot, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-slate-700">
+                            <div className="bg-indigo-100 rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-0.5">
+                              <i className="fa-solid fa-location-dot text-[10px] text-indigo-600"></i>
+                            </div>
+                            {spot}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                      <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-orange-600">
+                        <i className="fa-solid fa-utensils text-orange-500"></i>
+                        食べたいもの・食事
+                      </h3>
+                      <ul className="space-y-3">
+                        {tripData.food.map((item, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-slate-700">
+                            <div className="bg-orange-100 rounded-full w-5 h-5 flex items-center justify-center shrink-0 mt-0.5">
+                              <i className="fa-solid fa-utensils text-[10px] text-orange-600"></i>
+                            </div>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-100">
+                        <h4 className="font-bold text-sm text-orange-800 mb-2">3/20(金) 夜の予定</h4>
+                        <p className="text-sm text-slate-700">
+                          21:00頃、健太とパンダホテルで合流予定。<br/>
+                          その後、近隣の夜市などへ食事に出かける。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* INFO & VOUCHERS TAB */}
+              {activeTab === 'info' && (
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold flex items-center gap-2 mb-4 border-b pb-2">
+                    <i className="fa-solid fa-suitcase text-indigo-600"></i>
+                    バウチャー＆メモ
+                  </h2>
+
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h3 className="font-bold text-lg mb-4 text-indigo-900">予約バウチャー・受付番号</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {tripData.vouchers.map((v, idx) => (
+                        <div key={idx} className="p-4 border border-slate-200 rounded-lg bg-slate-50 flex flex-col h-full">
+                          <div className="font-bold text-indigo-700 mb-1">{v.type}</div>
+                          <div className="text-lg font-black font-mono text-slate-800 mb-2">{v.ref}</div>
+                          <div className="text-sm font-medium text-slate-600">{v.detail}</div>
+                          <div className="text-xs text-slate-500 mt-auto pt-2">{v.note}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-indigo-900">
+                      <i className="fa-solid fa-list-check text-indigo-500"></i>
+                      持ち物リスト
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
+                      {tripData.items.map((item, idx) => (
+                        <label key={idx} className="flex items-center gap-3 cursor-pointer p-2 hover:bg-slate-50 rounded">
+                          <input type="checkbox" className="w-5 h-5 text-indigo-600 rounded border-slate-300" />
+                          <span className="text-slate-700 select-none">{item}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-red-50 rounded-xl shadow-sm border border-red-100 p-5">
+                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2 text-red-800">
+                      <i className="fa-solid fa-phone text-red-600"></i>
+                      緊急連絡先
+                    </h3>
+                    <div className="space-y-2 text-red-900">
+                      <p className="flex justify-between border-b border-red-200 pb-1">
+                        <span>在香港日本国総領事館</span>
+                        <span className="font-bold font-mono">+852-2522-1184</span>
+                      </p>
+                      <p className="flex justify-between border-b border-red-200 pb-1">
+                        <span>パンダホテル フロント</span>
+                        <span className="font-bold font-mono">+852-24091111</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </main>
+
+          {/* Mobile Tab Navigation (Fixed Bottom) */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-2 z-50">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-col items-center justify-center w-full py-2 gap-1 rounded-lg ${
+                  activeTab === tab.id ? 'text-indigo-600' : 'text-slate-500'
+                }`}
+              >
+                <i className={`${tab.icon} text-xl ${activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}`}></i>
+                <span className="text-[10px] font-medium">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
